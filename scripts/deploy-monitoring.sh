@@ -7,7 +7,7 @@ set -o pipefail
 echo "🚀 Starting Full Monitoring Deployment (with SealedSecrets)..."
 
 # 1. تعريف المسارات
-PROJECT_ROOT="../../monitoring-project"
+PROJECT_ROOT="$(dirname "$(readlink -f "$0")")/.."
 K8S_DIR="$PROJECT_ROOT/kubernetes"
 DASH_DIR="$PROJECT_ROOT/dashboards-json"
 MON_NAMESPACE="monitoring"
