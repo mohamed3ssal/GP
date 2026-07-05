@@ -10,6 +10,17 @@ K8S_DIR="$PROJECT_ROOT/kubernetes"
 DASH_DIR="$PROJECT_ROOT/dashboards-json"
 MON_NAMESPACE="monitoring"
 
+# Load secrets if available
+if [ -f "$(dirname "$0")/secrets.sh" ]; then
+    source "$(dirname "$0")/secrets.sh"
+fi
+
+if [ -z "$SLACK_WEBHOOK_URL" ]; then
+    echo "❌ ERROR: SLACK_WEBHOOK_URL is not configured."
+    echo "Please create scripts/secrets.sh"
+    exit 1
+fi
+
 ############################################
 # Step 1 - AWS EBS CSI Driver
 ############################################
@@ -52,6 +63,7 @@ sleep 10
 echo "Step 4: Creating Slack Webhook Secret..."
 
 kubectl create secret generic slack-webhook-secret \
+  --from-literal=webhook-url="$SLACK_WEBHOOK_URL" \
   -n "$MON_NAMESPACE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
