@@ -4,3 +4,6 @@ sealed-secret-key.yaml
 *.swp
 *.swo
 *.swn
+scripts/secrets.sh
+scripts/secrets.sh
+scripts/secrets.sh
