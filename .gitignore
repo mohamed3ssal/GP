@@ -5,5 +5,3 @@ sealed-secret-key.yaml
 *.swo
 *.swn
 scripts/secrets.sh
-scripts/secrets.sh
-scripts/secrets.sh
