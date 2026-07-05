@@ -5,37 +5,46 @@ metadata:
   namespace: monitoring
   labels:
     release: monitoring-stack
+
 spec:
   receivers:
-  - name: 'null'
-  # تعريف الريسيفر العام برابط وهمي لتعطيله
-  - name: 'slack-notifications'
-    slackConfigs:
-    - apiURL:
-        key: webhook-url
-        name: slack-webhook-secret
-      channel: '#void-channel' 
-  # تعريف الريسيفر الخاص بك (الرابط الصحيح)
-  - name: 'Slack-Notifications'
-    slackConfigs:
-    - apiURL:
-        key: webhook-url
-        name: slack-webhook-secret
-      channel: '#alerts'
-      sendResolved: true
-      text: |-
-        • *Alert:* {{ .CommonAnnotations.summary }}
-        • *Description:* {{ .CommonAnnotations.description }}
-        • *Severity:* `{{ .CommonLabels.severity }}`
+    
+    - name: "null"
+
+    # Slack Receiver
+    - name: "Slack-Notifications"
+      slackConfigs:
+        - apiURL:
+            key: webhook-url
+            name: slack-webhook-secret
+          channel: "#alerts"
+          sendResolved: true
+          title: "🚨 {{ .CommonLabels.alertname }}"
+          text: |-
+            *Alert:* {{ .CommonLabels.alertname }}
+
+            *Description:*
+            {{ .CommonAnnotations.summary }}
+            {{ .CommonAnnotations.description }}
+
+            *Severity:* `{{ .CommonLabels.severity }}`
+
+            *Namespace:* `{{ .CommonLabels.namespace }}`
+            *Pod:* `{{ .CommonLabels.pod }}`
+            *Node:* `{{ .CommonLabels.node }}`
+            *Instance:* `{{ .CommonLabels.instance }}`
+
   route:
-    receiver: 'null'
-    groupBy: ['alertname', 'job']
+    receiver: "null"
+
+    groupBy:
+      - alertname
+      - namespace
+
     groupWait: 30s
     groupInterval: 5m
-    repeatInterval: 3h
+    repeatInterval: 30m
+
     routes:
-    - receiver: 'Slack-Notifications'
-      matchers:
-      - name: alertname
-        value: "HospitalServiceDown|PodFailing|PodPendingStuck|DeploymentIncomplete"
-        matchType: =~
+      
+      - receiver: "Slack-Notifications"
