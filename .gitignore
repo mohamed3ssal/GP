@@ -1,3 +1,6 @@
 sealed-secret-key.yaml
 .env
 *.log
+*.swp
+*.swo
+*.swn
